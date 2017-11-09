@@ -1,0 +1,6 @@
+*.pyc
+logs/
+checkpoints/microbot-v0/*
+checkpoints/microbot-v1/*
+checkpoints/MountainCarContinuous-v0/*
+!checkpoints/**/trained_agent/
