@@ -12,7 +12,8 @@ robot. This project makes the simplification of assuming that the robot only mov
 ## Sorting Task
 A magnetic micro-robot must sort particles to the left and right sides of the workspace depending on each particle's class.
 
-Solved with DDPG and Experience Replay.
+- Solved with DDPG and Experience Replay.
+
 ![Sorting Example](/media/images/sorting_example1.png?raw=true "Optional Title")
 
 ## Assembly Task
@@ -20,7 +21,7 @@ In progress.
 
 # Brains
 ## DDPG
-Deep Deterministic Policy Gradient (DDPG) [[1]](https://arxiv.org/abs/1509.02971) use a model-free, actor-critic algorithm that can successfully learn control policies operating over a continuous action space.
+Deep Deterministic Policy Gradient (DDPG) [[1]](https://arxiv.org/abs/1509.02971) uses a model-free, actor-critic algorithm that can successfully learn control policies operating over a continuous action space.
 
 # Memories
 ## Experience Replay
