@@ -31,7 +31,7 @@ Deep Deterministic Policy Gradient (DDPG) [[1]](https://arxiv.org/abs/1509.02971
 Experience Replay stores past agent experiences and randomly samples from them to perform network updates. First introduced in [[2]](http://www.dtic.mil/docs/citations/ADA261434).
 
 ## Prioritized Experience Replay
-In progress.
+In progress. (improving efficiency)
 
 ## A3C
 In progress.
