@@ -20,6 +20,9 @@ A magnetic micro-robot must sort particles to the left and right sides of the wo
 In progress.
 
 # Brains
+## Dueling DQN
+Temporarily replaced by DDPG to research a scenario with a continuous action space.
+
 ## DDPG
 Deep Deterministic Policy Gradient (DDPG) [[1]](https://arxiv.org/abs/1509.02971) uses a model-free, actor-critic algorithm that can successfully learn control policies operating over a continuous action space.
 
