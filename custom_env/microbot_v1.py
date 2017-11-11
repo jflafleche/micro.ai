@@ -375,10 +375,10 @@ class MicroRobot():
         
         s[2] = np.clip(s[2] - agent_pos[0], -2., 2.)
         s[3] = np.clip(s[3] - agent_pos[1], -2., 2.)
-        # s[8] = np.clip(s[8] - agent_pos[0], -2., 2.)
-        # s[9] = np.clip(s[9] - agent_pos[1], -2., 2.)
-        s[8] = 1.
-        s[9] = 1.
+        s[8] = np.clip(s[8] - agent_pos[0], -2., 2.)
+        s[9] = np.clip(s[9] - agent_pos[1], -2., 2.)
+        # s[8] = 1.
+        # s[9] = 1.
         if self.add_noise:
             s += np.random.normal(0.0, self.variance, (9))
         # print(s)
