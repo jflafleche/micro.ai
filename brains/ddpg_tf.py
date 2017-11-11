@@ -26,24 +26,20 @@ class DDPG_tf():
         self, 
         sess, 
         env_params,
-        actor_lr=0.0001, 
-        critic_lr=0.001,
-        tau=0.001,
-        discount_factor=0.99
+        brain_params
     ):
         self.state_dim = env_params['state_dim']
         self.action_dim = env_params['action_dim']
-        self.actor_lr = actor_lr
-        self.critic_lr = critic_lr
-        self.discount_factor = discount_factor
-        self.tau = tau # soft target update param
+        self.actor_lr = brain_params['lr_1']
+        self.critic_lr = brain_params['lr_2']
+        self.discount_factor = brain_params['gamma']
+        self.tau = brain_params['tau'] # soft target update param
 
         self.actor = ActorNetwork(sess, self.state_dim, self.action_dim, env_params['action_bounds'],
-                             actor_lr, self.tau)
+                                  self.actor_lr, self.tau)
 
         self.critic = CriticNetwork(sess, self.state_dim, self.action_dim,
-                            #    critic_lr, self.tau, self.actor.get_num_trainable_vars())
-                            critic_lr, self.tau)
+                                    self.critic_lr, self.tau)
 
     def predict(self, state):
         """ 
@@ -82,16 +78,11 @@ class DDPG_tf():
         # Calculate targets
         target_pi = self.actor.predict_target(states_)
         target_q = self.critic.predict_target(states_, target_pi)
-
-        y = np.zeros(batch_size)
-        for i in range(batch_size):
-            if stops[i]:
-                y[i] = rewards[i]
-            else:
-                y[i] = rewards[i] + self.discount_factor*target_q[i]
-
-        y = y.reshape(-1, 1)
-        # Update the critic given the targets
+        
+        stops = stops[:, np.newaxis]
+        rewards = rewards[:, np.newaxis]
+        
+        y = rewards + self.discount_factor*target_q*(-stops)
         predicted_q_value, _ = self.critic.train(states, actions, y)
         max_q = np.amax(predicted_q_value)
 
