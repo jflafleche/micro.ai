@@ -151,7 +151,7 @@ class MicroRobot():
         self.total_reward = 0
         self.total_goals = 0
         self.steps = 0
-        self.allowed_time = 15.
+        self.allowed_time = 30.
         self.done = False
         self.reached = []
         self.not_reached = []

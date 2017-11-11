@@ -44,9 +44,9 @@ def train(
     SUMMARY_DIR = './logs/' + path + '/' + datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
     CHECKPOINT_DIR = './checkpoints/' + path
 
-    state_dim = env.observation_space.shape[0]
-    action_dim = env.action_space.shape[0]
-    action_bounds = [env.action_space.low[0], env.action_space.high[0]]
+    state_dim = env_params['state_dim']
+    action_dim = env_params['action_dim']
+    action_bounds = env_params['action_bounds']
     r_successes = 0
     r_rewards = 0
     ep_avg_max_q = 0
@@ -58,10 +58,11 @@ def train(
     summary_vars, summary_ops = build_summaries()
 
     sess.run(tf.global_variables_initializer())
+
     summary_writer = tf.summary.FileWriter(SUMMARY_DIR, sess.graph)
     saver = tf.train.Saver()
 
-    agent.update()
+    # agent.update()
 
     # LOADER
     if resume or agent_params['trained_agent']:
@@ -97,6 +98,7 @@ def train(
             experience = (s, a, r, s_, done)
             agent.observe(experience)
             max_q = agent.replay()
+            agent.update()
             ep_avg_max_q += max_q
 
             s = s_.copy()
@@ -197,29 +199,43 @@ def main(args):
         else:
             env = gym.make(args['env'])
             env.seed(int(args['random_seed']))
+            # determine type of action space
+        
+        action_space_type = env.action_space.__class__.__name__
+
+        if action_space_type == 'Discrete':
+            action_dim = env.action_space.n
+            action_bounds = None
+        else:
+            action_dim = env.action_space.shape[0]
+            action_bounds = [env.action_space.low[0], env.action_space.high[0]]
 
         env_params = {
             'env': args['env'],
+            'env_type': args['env_type'],
             'state_dim': env.observation_space.shape[0],
-            'action_dim': env.action_space.shape[0],
-            'action_bounds': [env.action_space.low[0], env.action_space.high[0]]
+            'action_dim': action_dim,
+            'action_bounds': action_bounds
         }
 
         # BRAIN SETUP
+        brain_params = {
+            'lr_1': float(args['lr_1']),
+            'lr_2': float(args['lr_2']),
+            'tau': float(args['tau']),
+            'gamma': float(args['gamma'])
+        }
         brains = Brains(
             sess,
             env_params,
-            args['actor_lr'],
-            args['critic_lr'],
-            args['tau'],
-            args['gamma']
+            brain_params
         )
         brain = brains.get(args['brain'])
 
         # MEMORY SETUP
         memory_params = {
-            'capacity': args['memory_capacity'],
-            'minibatch_size': args['minibatch_size']
+            'capacity': int(args['memory_capacity']),
+            'minibatch_size': int(args['minibatch_size'])
         }
         memories = Memories(memory_params)
         memory = memories.get(args['memory'])
@@ -228,9 +244,9 @@ def main(args):
         agent_params = {
             'trained_agent': args['trained_agent'],
             'exploration_type': args['exploration_type'],
-            'exploration_init': args['exploration_init'],
-            'exploration_final': args['exploration_final'],
-            'exploration_rate': args['exploration_rate']
+            'exploration_init': float(args['exploration_init']),
+            'exploration_final': float(args['exploration_final']),
+            'exploration_rate': float(args['exploration_rate'])
         }
         agent = Agent(memory, brain, env_params, agent_params)
 
@@ -253,8 +269,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='provide arguments for DDPG agent')
     # brain parameters
     parser.add_argument('--brain', help='brain choice', default='ddpg-tf')
-    parser.add_argument('--actor-lr', help='actor network learning rate', default=0.0001)
-    parser.add_argument('--critic-lr', help='critic network learning rate', default=0.001)
+    parser.add_argument('--lr-1', help='general or actor network learning rate', default=0.0001)
+    parser.add_argument('--lr-2', help='critic network learning rate', default=0.001)
 
     # memory parameter
     parser.add_argument('--memory', help='memory choice', default='experience-replay')
@@ -268,6 +284,7 @@ if __name__ == '__main__':
 
     # run parameters
     parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Pendulum-v0')
+    parser.add_argument('--env-type', help='specify either a discrete or continuous action space', default='noise')
     parser.add_argument('--random-seed', help='random seed for repeatability', default=1234)
     parser.add_argument('--max-episodes', help='max num of episodes to do while training', default=50000)
     parser.add_argument('--max-episode-len', help='max length of 1 episode', default=10000)

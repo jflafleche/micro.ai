@@ -15,7 +15,9 @@ class Agent():
         self.exp_params = exploration_params
 
         self.epsilon = self.exp_params['exploration_init']
-        self.noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(self.env_params['action_dim']))
+        self.epsilon_final = self.exp_params['exploration_final']
+        self.epsilon_decay = self.exp_params['exploration_rate']
+        self.noise = OrnsteinUhlenbeckActionNoise(env_params)
 
     def act(self, state):
         """
@@ -35,12 +37,27 @@ class Agent():
         a = self.brain.predict(state)
 
         if self.exp_params['exploration_type'] == 'random' and random.random() < self.epsilon:
-                a = np.random.uniform(self.env_params['action_bounds'][0], 
-                                      self.env_params['action_bounds'][1],
-                                      (self.env_params['action_dim'],))
+            a = self.explore()
+
         elif self.exp_params['exploration_type'] == 'noise':
+            if self.env_params['env_type'] == 'discrete':
+                raise NotImplementedError('You may not use noisy exploration in conjunction '
+                                        'with a discrete action space. Please choose a different '
+                                        'exploration-type')
             a += self.noise()
 
+        return a
+
+    def explore(self):
+        if self.env_params['env_type'] == 'discrete':
+            a = np.random.randint(0, self.env_params['action_dim'])
+        else:
+            a = np.random.uniform(self.env_params['action_bounds'][0], 
+                                self.env_params['action_bounds'][1],
+                                (self.env_params['action_dim'],))
+        
+        if self.epsilon > self.epsilon_final:
+            self.epsilon -= self.epsilon_decay
         return a
 
     def a3c_train(self, experience):
@@ -86,9 +103,9 @@ class OrnsteinUhlenbeckActionNoise:
     based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
     Credit: Patrick Emami
     """
-    def __init__(self, mu, sigma=0.3, theta=.15, dt=1e-2, x0=None):
+    def __init__(self, env_params, sigma=0.3, theta=.15, dt=1e-2, x0=None):
+        self.mu=np.zeros(env_params['action_dim'])
         self.theta = theta
-        self.mu = mu
         self.sigma = sigma
         self.dt = dt
         self.x0 = x0

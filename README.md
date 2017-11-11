@@ -20,15 +20,15 @@ A magnetic micro-robot must sort particles to the left and right sides of the wo
 In progress.
 
 # Brains
-## Dueling DQN
-Temporarily replaced by DDPG to research a scenario with a continuous action space.
+## Duelling DQN
+Double Duelling DQN [[1]](https://arxiv.org/pdf/1511.06581.pdf) features two estimators: the action advantage function and the satte value function.
 
 ## DDPG
-Deep Deterministic Policy Gradient (DDPG) [[1]](https://arxiv.org/abs/1509.02971) uses a model-free, actor-critic algorithm that can successfully learn control policies operating over a continuous action space.
+Deep Deterministic Policy Gradient (DDPG) [[2]](https://arxiv.org/abs/1509.02971) uses a model-free, actor-critic algorithm that can successfully learn control policies operating over a continuous action space.
 
 # Memories
 ## Experience Replay
-Experience Replay stores past agent experiences and randomly samples from them to perform network updates. First introduced in [[2]](http://www.dtic.mil/docs/citations/ADA261434).
+Experience Replay stores past agent experiences and randomly samples from them to perform network updates. First introduced in [[3]](http://www.dtic.mil/docs/citations/ADA261434).
 
 ## Prioritized Experience Replay
 In progress. (improving efficiency)
@@ -38,11 +38,13 @@ In progress.
 
 # References:
 
-[[1]](https://arxiv.org/abs/1509.02971) Lillicrap, Timothy P., et al. "Continuous control with deep reinforcement learning." arXiv preprint arXiv:1509.02971 (2015).
+[[1]](https://arxiv.org/pdf/1511.06581.pdf) Wang, Ziyu, et al. "Dueling network architectures for deep reinforcement learning." arXiv preprint arXiv:1511.06581 (2015).
 
-[[2]](http://www.dtic.mil/docs/citations/ADA261434) Lin, Long-Ji. Reinforcement learning for robots using neural networks. No. CMU-CS-93-103. Carnegie-Mellon Univ Pittsburgh PA School of Computer Science, 1993.
+[[2]](https://arxiv.org/abs/1509.02971) Lillicrap, Timothy P., et al. "Continuous control with deep reinforcement learning." arXiv preprint arXiv:1509.02971 (2015).
 
-[[3]](http://www.nowpublishers.com/article/Details/ROB-023) Diller, Eric, and Metin Sitti. "Micro-scale mobile robotics." Foundations and Trends® in Robotics 2.3 (2013): 143-259.
+[[3]](http://www.dtic.mil/docs/citations/ADA261434) Lin, Long-Ji. Reinforcement learning for robots using neural networks. No. CMU-CS-93-103. Carnegie-Mellon Univ Pittsburgh PA School of Computer Science, 1993.
+
+[[4]](http://www.nowpublishers.com/article/Details/ROB-023) Diller, Eric, and Metin Sitti. "Micro-scale mobile robotics." Foundations and Trends® in Robotics 2.3 (2013): 143-259.
 
 # Reinforcement Learning Resources:
 https://medium.com/@awjuliani/simple-reinforcement-learning-with-tensorflow-part-4-deep-q-networks-and-beyond-8438a3e2b8df#.yit72xseu
